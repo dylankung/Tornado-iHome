@@ -88,3 +88,35 @@ class HouseImageHandler(BaseHandler):
             return self.write({"errno":2, "errmsg":"upload failed"})
         img_url = image_url_prefix + img_name
         self.write({"errno":0, "errmsg":"OK", "url":img_url})
+
+
+class MyHousesHandler(BaseHandler):
+    """我的房源"""
+    @require_logined
+    def get(self):
+        user_id = self.session.data["user_id"]
+        try:
+            ret = self.db.query("select a.hi_house_id,a.hi_title,a.hi_price,a.hi_ctime,b.ai_name from ih_house_info a left join ih_area_info b on a.hi_area_id=b.ai_area_id where a.hi_user_id=%s;", user_id)
+        except Exception as e:
+            logging.error(e)
+            return self.write({"errno":1, "errmsg":"get data erro"})
+        houses = []
+        if ret:
+            for l in ret:
+                house = {
+                    "house_id":l["hi_house_id"],
+                    "title":l["hi_title"],
+                    "price":l["hi_price"],
+                    "ctime":l["hi_ctime"].strftime("%Y-%m-%d"),
+                    "area_name":l["ai_name"],
+                    "img_url":""
+                }
+                try:
+                    img_ret = self.db.get("select hi_url from ih_house_image where hi_house_id=%s limit 1", l["hi_house_id"])
+                except Exception as e:
+                    logging.error(e)
+                    img_ret = None
+                if img_ret:
+                    house["img_url"] = image_url_prefix + img_ret["hi_url"]
+                houses.append(house)
+        self.write({"errno":0, "errmsg":"OK", "houses":houses})

@@ -28,7 +28,7 @@ function setEndDate() {
 }
 
 function goToSearchPage(th) {
-    var url = "/view/search.html?";
+    var url = "/search.html?";
     url += ("aid=" + $(th).attr("area-id"));
     url += "&";
     url += ("sd=" + $(th).attr("start-date"));

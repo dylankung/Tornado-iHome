@@ -9,7 +9,7 @@ function showSuccessMsg() {
 $(document).ready(function(){
     $.get("/api/profile", function(data){
         if (-1 == data.errno) {
-            location.href = "/view/login.html";
+            location.href = "/login.html";
         }
         else if (0 == data.errno) {
             $("#user-name").val(data.data.name);

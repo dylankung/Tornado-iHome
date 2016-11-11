@@ -2,7 +2,6 @@
 
 from handlers.BaseHandler import *
 from tornado.web import StaticFileHandler
-from config import settings
 from handlers import VerifyCode, Passport, Profile, House
 
 import os
@@ -22,17 +21,16 @@ ihome_api_urls = [
     (r'^/api/house/info$', House.HouseInfoHandler),
     (r'^/api/house/image$', House.HouseImageHandler),
     (r'^/api/house/area$', House.HouseAreaHandler),
+    (r'^/api/house/my$', House.MyHousesHandler),
 ]
 
 mis_api_urls = [
 ]
 
-urls = [
-    (r'^/()$', StaticFileHandler, {'path':os.path.join(settings['static_path'], 'html/ihome'), 'default_filename':'index.html'}),
-    (r'^/view/(.+)$', StaticFileHandler, {'path':os.path.join(settings['static_path'], 'html/ihome')}),
-    (r'^/mis/()$', StaticFileHandler, {'path':os.path.join(settings['static_path'], 'html/mis'), 'default_filename':'index.html'}),
-    (r'^/mis/view/(.+)$', StaticFileHandler, {'path':os.path.join(settings['static_path'], 'html/mis')}),
-]
-
+urls = []
 urls.extend(ihome_api_urls)
 urls.extend(mis_api_urls)
+urls.extend([
+    (r'^/(.*)$', StaticFileHandler, {'path':os.path.join(os.path.dirname(__file__), 'html'), 'default_filename':'index.html'}),
+])   
+
