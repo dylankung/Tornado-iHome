@@ -1,0 +1,23 @@
+{% extends "menu_base.html" %}
+
+{% block title %}个人资料{% end %}
+
+{% block order_active %} class="active" {% end %}
+
+{% block body %}
+    <H1>这是订单列表页</H1>
+    <div id="nofity">
+    </div>
+{% end %}
+
+{% block footer %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        var url = "ws://127.0.0.1:8000/enterProfilePageNotify";
+        socket = new WebSocket(url);
+        socket.onmessage = function(event){
+            $("#nofity").append('<p>'+event.data+'</p>');
+        };
+    });
+</script>
+{% end %}

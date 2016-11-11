@@ -1,0 +1,27 @@
+{% extends "menu_base.html" %}
+
+{% block title %}个人资料{% end %}
+
+{% block profile_active %} class="active" {% end %}
+
+{% block body %}
+    <H1>这是个人资料主页</H1>
+    <div id="user-login-nofity">
+    </div>
+{% end %}
+
+{% block footer %}
+<!--     <script>
+    $(document).ready(function(){
+       var url = "ws://" + location.host + "/loginNotify";
+       var socket = new WebSocket(url);
+       socket.onmessage = function(e) {
+            $("#user-login-nofity").append("<p>"+e.data+"</p>");
+       }
+    });
+    </script> -->
+{% end %}
+
+
+http://hostname:port/path
+ws://hostname:port/path

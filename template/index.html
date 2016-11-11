@@ -1,0 +1,57 @@
+{% extends "index_base.html" %}
+
+{% block title %}爱家短租{% end %}
+
+{% block body %}
+    <form method="get" action="/search">
+        <input type="text" name="keyword">
+        <input type="submit">
+    </form>
+    <form id="order-form" method="post" action="">
+        {% module xsrf_form_html() %}
+        <p>订单编号<input type="text" name="order_id"></p>
+        <p>商品名称<input type="text" name="subject"></p>
+        <p>订单详情<input type="text" name="body"></p>
+        <p>订单金额<input type="number" name="amount"></p>
+        <p>支付方式
+            <select name="channel">
+                <option value="alipay_pc_direct">支付宝</option>
+                <option value="upacp_pc">银联</option>
+            </select>
+        </p>
+        <input type="submit">
+    </form>
+{% end %}
+
+{% block footer %}
+    <script src="{{static_url('js/pingpp.js')}}"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $("#order-form").submit(function(e){
+                e.preventDefault();
+                data = $("#order-form").serialize();
+                $.post('/order', data, function(ret){
+                    if ("error" == ret) {
+                        alert("获取支付方式失败！");
+                        return;
+                    }
+                    // console.log(ret);
+                    // charge = JSON.parse(ret);
+                    charge = ret;
+                    pingpp.createPayment(charge, function(result, err){
+                        console.log(result);
+                        console.log(err.msg);
+                        console.log(err.extra);
+                        if (result == "success") {
+                            // 只有微信公众账号 wx_pub 支付成功的结果会在这里返回，其他的支付结果都会跳转到 extra 中对应的 URL。
+                        } else if (result == "fail") {
+                            // charge 不正确或者微信公众账号支付失败时会在此处返回
+                        } else if (result == "cancel") {
+                            // 微信公众账号支付取消支付
+                        }
+                    });
+                }); 
+            });
+        });
+    </script>
+{% end %}
