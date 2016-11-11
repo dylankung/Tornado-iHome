@@ -10,6 +10,6 @@ $(document).ready(function() {
         autoclose: true
     });
     $(".submit-btn").on("click", function(e) {
-        location.href = "/view/orders.html";
+        location.href = "/orders.html";
     });
 })

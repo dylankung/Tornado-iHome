@@ -1,7 +1,7 @@
 $(document).ready(function(){
     $.get("/api/house/area", function(data){
         if (-1 == data.errno) {
-            location.href = "/view/login.html";
+            location.href = "/login.html";
         } else if (0 == data.errno) {
             for (var i=0; i<data.data.length; i++) {
                 $("#area-id").append('<option value="'+ data.data[i].area_id+'">'+ data.data[i].name+'</option>');
@@ -32,7 +32,7 @@ $(document).ready(function(){
             dataType: "json",
             success: function (data) {
                 if (-1 == data.errno) {
-                    location.href = "/view/login.html";
+                    location.href = "/login.html";
                 } else if (0 == data.errno) {
                     $("#house-id").val(data.house_id);
                     $(".error-msg").hide();
@@ -46,7 +46,7 @@ $(document).ready(function(){
         $('.popup_con').fadeIn('fast');
         $(this).ajaxSubmit(function(data){
             if (-1 == data.errno) {
-                location.href = "/view/login.html";
+                location.href = "/login.html";
             } else if (0 == data.errno) {
                 $(".house-image-cons").append('<img src="'+ data.url+'">');
                 $('.popup_con').fadeOut('fast');
