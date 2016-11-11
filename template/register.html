@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>iHome</title>
+    <meta charset="utf-8"/>
+    <link type="text/css" rel="stylesheet" href="{{static_url('bootstrap/css/bootstrap.css')}}">
+</head>
+<body>
+    <p>{{error_msg}}<p>
+    <form id="register-form" method="post" enctype="multipart/form-data">
+        {% module xsrf_form_html() %}
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="Input your name" required>
+        </div>
+        <div class="form-group">
+            <label for="mobile">Mobile</label>
+            <input type="number" class="form-control" id="mobile" name="mobile" placeholder="Input your mobile" required>
+        </div>
+        <div class="form-group">
+            <label for="passwd1">Passwd</label>
+            <input type="text" class="form-control" id="passwd1" name="passwd1" placeholder="Input your passwd" required>
+        </div>
+        <div class="form-group">
+            <label for="passwd2">Passwd Again</label>
+            <input type="text" class="form-control" id="passwd2" name="passwd2" placeholder="Input your passwd again" required>
+        </div>
+        <!-- <input type="file" accept="image/" name="avatar"> -->
+        <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+    <script type="text/javascript" src="{{static_url('js/jquery.min.js')}}"></script>
+    <script type="text/javascript" src="{{static_url('bootstrap/js/bootstrap.js')}}"></script>
+    <script type="text/javascript" src="{{static_url('js/register.js')}}"></script>
+</body>
+</html>
