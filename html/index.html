@@ -25,25 +25,21 @@
         </div>
         <div class="swiper-container">
             <div class="swiper-wrapper">
-                <div class="swiper-slide">
-                    <a href="/detail.html"><img src="/static/images/home01.jpg"></a>
-                    <div class="slide-title">宽窄巷子+160平大空间+文化保护区双地铁</div>
-                </div>
-                <div class="swiper-slide">
-                    <a href="/detail.html"><img src="/static/images/home02.jpg"></a>
-                    <div class="slide-title">南山路/西湖零距离，舒适公寓</div>
-                </div>
-                <div class="swiper-slide">
-                    <a href="/detail.html"><img src="/static/images/home03.jpg"></a>
-                    <div class="slide-title">延安西路地铁3号线，老上海花园洋房</div>
-                </div>
             </div>
+            <script id="swiper-houses-tmpl" type="text/html">
+                {{each houses as house}}
+                <div class="swiper-slide">
+                    <a href="/detail.html?id={{house.house_id}}"><img src="{{house.img_url}}"></a>
+                    <div class="slide-title">{{house.title}}</div>
+                </div>
+                {{/each}}
+            </script>
             <div class="swiper-pagination"></div>
         </div>
         <div class="search-bar">
             <button class="filter-btn" type="button" data-toggle="modal" data-target="#area-modal"><span class="fl" id="area-btn">选择城区</span><span class="fr"><i class="fa fa-map-marker fa-lg fa-fw"></i></span></button>
             <button class="filter-btn" type="button" data-toggle="modal" data-target="#start-date-modal"><span class="fl" id="start-date-btn">入住日期</span><span class="fr"><i class="fa fa-calendar fa-lg fa-fw"></i></span></button>
-            <button class="filter-btn" type="button" data-toggle="modal" data-target="#end-date-modal"><span class="fl" id="end-date-btn">离开日期</span><span class="fr"><i class="fa fa-calendar fa-lg fa-fw"></i></span></button>
+            <button class="filter-btn end-date" type="button" data-toggle="modal" data-target="#end-date-modal"><span class="fl" id="end-date-btn">离开日期</span><span class="fr"><i class="fa fa-calendar fa-lg fa-fw"></i></span></button>
             <a class="btn search-btn btn-theme" href="#" onclick="goToSearchPage(this);" area-id="" start-date="" end-date="">搜索</a>
             <div class="modal fade" id="area-modal" tabindex="-1" role="dialog" aria-labelledby="area-label">
                 <div class="modal-dialog" role="document">
@@ -54,23 +50,12 @@
                         </div>
                         <div class="modal-body">
                             <div class="area-list">
-                                <a href="#" area-id="01">东城区</a>
-                                <a href="#" area-id="02">西城区</a>
-                                <a href="#" area-id="03">朝阳区</a>
-                                <a href="#" area-id="04">海淀区</a>
-                                <a href="#" area-id="05">昌平区</a>
-                                <a href="#" area-id="06">丰台区</a>
-                                <a href="#" area-id="07">房山区</a>
-                                <a href="#" area-id="08">通州区</a>
-                                <a href="#" area-id="09">顺义区</a>
-                                <a href="#" area-id="10">大兴区</a>
-                                <a href="#" area-id="11">怀柔区</a>
-                                <a href="#" area-id="12">平谷区</a>
-                                <a href="#" area-id="13">密云区</a>
-                                <a href="#" area-id="14">延庆区</a>
-                                <a href="#" area-id="15">石景山区</a>
-                                <a href="#" area-id="16">门头沟区</a>
                             </div>
+                            <script id="area-list-tmpl" type="text/html">
+                            {{each areas as area}}
+                                <a href="#" area-id="{{area.area_id}}">{{area.name}}</a>
+                            {{/each}}
+                            </script>
                         </div>
                     </div>
                 </div>
@@ -120,23 +105,7 @@
     <script src="/static/plugins/swiper/js/swiper.jquery.min.js"></script>
     <script src="/static/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
     <script src="/static/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+    <script src="/static/js/template.js"></script>
     <script src="/static/js/ihome/index.js"></script>
-    <script type="text/javascript">
-        var mySwiper = new Swiper ('.swiper-container', {
-            loop: true,
-            autoplay: 2000,
-            autoplayDisableOnInteraction: false,
-            pagination: '.swiper-pagination',
-            paginationClickable: true
-        });         
-        $.get("/api/check_login", function(data) {
-            if (0 == data.errno) {
-                $(".top-bar>.user-info>.user-name").html(data.data.name);    
-                $(".top-bar>.user-info").show();
-            } else {
-                $(".top-bar>.register-login").show();
-            }
-        }, "json");
-    </script>
 </body>
 </html>

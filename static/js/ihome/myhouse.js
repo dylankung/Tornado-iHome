@@ -3,11 +3,13 @@ $(document).ready(function(){
         if (-1 == data.errno) {
             location.href = "/login.html";
         } else if (0 == data.errno) {
+            if ("" == data.data.real_name || "" == data.data.id_card) {
+                $(".auth-warn").show();
+                return;
+            }
             $.get("/api/house/my", function(result){
-                $("#houses-list").render("houses-list-tmpl", {houses:result.houses}); 
+                $("#houses-list").html(template("houses-list-tmpl", {houses:result.houses})); 
             }); 
-        } else {
-            $(".auth-warn").show();
         }
     });
 })

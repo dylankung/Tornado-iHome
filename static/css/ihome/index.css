@@ -100,3 +100,6 @@ body {
 .datepicker-inline, .datepicker table {
     width: 100% !important;
 }
+.end-date {
+    display: none;
+}

@@ -31,7 +31,7 @@
                     <span class="split-line fr">|</span>
                 </li>
                 <li class="filter-title">
-                    <span>推荐排序</span>
+                    <span>最新上线</span>
                     <span><i class="fa fa-angle-down"></i></span>
                 </li>
             </ul>
@@ -44,26 +44,10 @@
                     </div>
                 </div>
                 <ul class="filter-item filter-area">
-                    <li area-id="01">东城区</li>
-                    <li area-id="02">西城区</li>
-                    <li area-id="03">朝阳区</li>
-                    <li area-id="04">海淀区</li>
-                    <li area-id="05">昌平区</li>
-                    <li area-id="06">丰台区</li>
-                    <li area-id="07">房山区</li>
-                    <li area-id="08">通州区</li>
-                    <li area-id="09">顺义区</li>
-                    <li area-id="10">大兴区</li>
-                    <li area-id="11">怀柔区</li>
-                    <li area-id="12">平谷区</li>
-                    <li area-id="13">密云区</li>
-                    <li area-id="14">延庆区</li>
-                    <li area-id="15">石景山区</li>
-                    <li area-id="16">门头沟区</li>
                 </ul>
                 <ul class="filter-item filter-sort">
-                    <li class="active" sort-key="recommend">推荐排序</li>
-                    <li sort-key="score">评分最高</li>
+                    <li class="active" sort-key="new">最新上线</li>
+                    <li sort-key="booking">入住最多</li>
                     <li sort-key="price-inc">价格 低-高</li>
                     <li sort-key="price-des">价格 高-低</li>
                 </ul>
@@ -71,40 +55,22 @@
         </div>
         <div class="display-mask"></div>
         <ul class="house-list">
-            <li class="house-item">
-                <a href="/detail.html"><img src="/static/images/home01.jpg"></a>
-                <div class="house-desc">
-                    <div class="landlord-pic"><img src="/static/images/landlord01.jpg"></div>
-                    <div class="house-price">￥<span>398</span>/晚</div>
-                    <div class="house-intro">
-                        <span class="house-title">宽窄巷子+160平大空间+文化保护区双地铁</span>
-                        <em>整套出租 - 5分/6点评 - 北京市丰台区六里桥地铁</em>
-                    </div>
-                </div>
-            </li>
-            <li class="house-item">
-                <a href="/detail.html"><img src="/static/images/home02.jpg"></a>
-                <div class="house-desc">
-                    <div class="landlord-pic"><img src="/static/images/landlord01.jpg"></div>
-                    <div class="house-price">￥<span>298</span>/晚</div>
-                    <div class="house-intro">
-                        <span class="house-title">南山路/西湖零距离，舒适公寓</span>
-                        <em>整套出租 - 5分/6点评 - 北京市丰台区六里桥地铁</em>
-                    </div>
-                </div>
-            </li>
-            <li class="house-item">
-                <a href="/detail.html"><img src="/static/images/home03.jpg"></a>
-                <div class="house-desc">
-                    <div class="landlord-pic"><img src="/static/images/landlord01.jpg"></div>
-                    <div class="house-price">￥<span>198</span>/晚</div>
-                    <div class="house-intro">
-                        <span class="house-title">延安西路地铁3号线，老上海花园洋房</span>
-                        <em>整套出租 - 5分/6点评 - 北京市丰台区六里桥地铁</em>
-                    </div>
-                </div>
-            </li>
         </ul>
+        <script id="house-list-tmpl" type="text/html">
+            {{each houses as house}}
+            <li class="house-item">
+                <a href="/detail.html?id={{house.house_id}}"><img src="{{house.img_url}}"></a>
+                <div class="house-desc">
+                    <div class="landlord-pic"><img src="{{house.avatar_url}}"></div>
+                    <div class="house-price">￥<span>{{(house.price/100.0).toFixed(0)}}</span>/晚</div>
+                    <div class="house-intro">
+                        <span class="house-title">{{house.title}}</span>
+                        <em>出租{{house.room_count}}间 - {{house.order_count}}次入住 - {{house.address}}</em>
+                    </div>
+                </div>
+            </li>
+            {{/each}}           
+        </script>
         <div class="footer">
             <p><span><i class="fa fa-copyright"></i></span>爱家租房&nbsp;&nbsp;享受家的温馨</p>
         </div>
@@ -114,6 +80,7 @@
     <script src="/static/plugins/bootstrap/js/bootstrap.min.js"></script>
     <script src="/static/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
     <script src="/static/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+    <script src="/static/js/template.js"></script>
     <script src="/static/js/ihome/search.js"></script>
 </body>
 </html>

@@ -2,7 +2,7 @@
 
 from handlers.BaseHandler import *
 from tornado.web import StaticFileHandler
-from handlers import VerifyCode, Passport, Profile, House
+from handlers import VerifyCode, Passport, Profile, House, Orders
 
 import os
 
@@ -22,6 +22,10 @@ ihome_api_urls = [
     (r'^/api/house/image$', House.HouseImageHandler),
     (r'^/api/house/area$', House.HouseAreaHandler),
     (r'^/api/house/my$', House.MyHousesHandler),
+    (r'^/api/house/index$', House.IndexHandler),
+    (r'^/api/house/list$', House.HouseListHandler),
+    (r'^/api/order$', Orders.OrderHandler),
+    (r'^/api/order/my$', Orders.MyOrdersHandler),
 ]
 
 mis_api_urls = [
