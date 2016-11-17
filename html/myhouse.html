@@ -41,7 +41,7 @@
                 </li>
                 {{each houses as house}}
                 <li>
-                    <a href="/detail.html?id={{house.house_id}}">
+                    <a href="/detail.html?id={{house.house_id}}&f=my">
                         <div class="house-title">
                             <h3>房屋ID:{{house.house_id}} —— {{house.title}}</h3>
                         </div>
@@ -69,7 +69,7 @@
     <script src="/static/plugins/bootstrap/js/bootstrap.min.js"></script>
     <script src="/static/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
     <script src="/static/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
-    <script src="/static/js/template.js?v=3"></script>
+    <script src="/static/js/template.js"></script>
     <script src="/static/js/ihome/myhouse.js"></script>
 </body>
 </html>

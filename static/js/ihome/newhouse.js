@@ -1,8 +1,6 @@
 $(document).ready(function(){
     $.get("/api/house/area", function(data){
-        if (-1 == data.errno) {
-            location.href = "/login.html";
-        } else if (0 == data.errno) {
+        if (0 == data.errno) {
             for (var i=0; i<data.data.length; i++) {
                 $("#area-id").append('<option value="'+ data.data[i].area_id+'">'+ data.data[i].name+'</option>');
             }

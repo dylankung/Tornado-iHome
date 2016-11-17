@@ -14,6 +14,22 @@ function setStartDate() {
     if (startDate) {
         $(".search-btn").attr("start-date", startDate);
         $("#start-date-btn").html(startDate);
+        $("#end-date").datepicker("destroy");
+        $("#end-date-btn").html("离开日期");
+        $("#end-date-input").val("");
+        $(".search-btn").attr("end-date", "");
+        $("#end-date").datepicker({
+            language: "zh-CN",
+            keyboardNavigation: false,
+            startDate: startDate,
+            format: "yyyy-mm-dd"
+        });
+        $("#end-date").on("changeDate", function() {
+            $("#end-date-input").val(
+                $(this).datepicker("getFormattedDate")
+            );
+        });
+        $(".end-date").show();
     }
     $("#start-date-modal").modal("hide");
 }
@@ -31,6 +47,10 @@ function goToSearchPage(th) {
     var url = "/search.html?";
     url += ("aid=" + $(th).attr("area-id"));
     url += "&";
+    var areaName = $(th).attr("area-name");
+    if (undefined == areaName) areaName="";
+    url += ("aname=" + areaName);
+    url += "&";
     url += ("sd=" + $(th).attr("start-date"));
     url += "&";
     url += ("ed=" + $(th).attr("end-date"));
@@ -38,6 +58,33 @@ function goToSearchPage(th) {
 }
 
 $(document).ready(function(){
+    $.get("/api/check_login", function(data) {
+        if (0 == data.errno) {
+            $(".top-bar>.user-info>.user-name").html(data.data.name);    
+            $(".top-bar>.user-info").show();
+        } else {
+            $(".top-bar>.register-login").show();
+        }
+    }, "json");
+    $.get("/api/house/index", function(data){
+        if (0 == data.errno) {
+            $(".swiper-wrapper").html(template("swiper-houses-tmpl", {houses:data.houses}));
+            $(".area-list").html(template("area-list-tmpl", {areas:data.areas}));
+            var mySwiper = new Swiper ('.swiper-container', {
+                loop: true,
+                autoplay: 2000,
+                autoplayDisableOnInteraction: false,
+                pagination: '.swiper-pagination',
+                paginationClickable: true
+            }); 
+            $(".area-list a").click(function(e){
+                $("#area-btn").html($(this).html());
+                $(".search-btn").attr("area-id", $(this).attr("area-id"));
+                $(".search-btn").attr("area-name", $(this).html());
+                $("#area-modal").modal("hide");
+            });
+        }
+    });
     $('.modal').on('show.bs.modal', centerModals);      //当模态框出现的时候
     $(window).on('resize', centerModals);               //当窗口大小变化的时候
     $("#start-date").datepicker({
@@ -47,24 +94,7 @@ $(document).ready(function(){
         format: "yyyy-mm-dd"
     });
     $("#start-date").on("changeDate", function() {
-        $("#start-date-input").val(
-            $("#start-date").datepicker("getFormattedDate")
-        );
-    });
-    $("#end-date").datepicker({
-        language: "zh-CN",
-        keyboardNavigation: false,
-        startDate: "today",
-        format: "yyyy-mm-dd"
-    });
-    $("#end-date").on("changeDate", function() {
-        $("#end-date-input").val(
-            $("#end-date").datepicker("getFormattedDate")
-        );
-    });
-    $(".area-list a").click(function(e){
-        $("#area-btn").html($(this).html());
-        $(".search-btn").attr("area-id", $(this).attr("area-id"));
-        $("#area-modal").modal("hide");
+        var date = $(this).datepicker("getFormattedDate");
+        $("#start-date-input").val(date);
     });
 })

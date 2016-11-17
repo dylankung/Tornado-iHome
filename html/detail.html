@@ -22,88 +22,91 @@
             </div>
         </div>
         <div class="swiper-container">
+        </div>
+        <script id="house-image-tmpl" type="text/html">
             <ul class="swiper-wrapper">
-                <li class="swiper-slide"><img src="/static/images/home01.jpg"></li>
-                <li class="swiper-slide"><img src="/static/images/home02.jpg"></li>
-                <li class="swiper-slide"><img src="/static/images/home03.jpg"></li>
+                {{each img_urls as img_url}}
+                <li class="swiper-slide"><img src="{{img_url}}"></li>
+                {{/each}}
             </ul>
             <div class="swiper-pagination"></div>
-            <div class="house-price">￥<span>298</span>/晚</div>
-        </div>
+            <div class="house-price">￥<span>{{(price/100.0).toFixed(0)}}</span>/晚</div>
+        </script>
         <div class="detail-con">
+        </div>
+        <script id="house-detail-tmpl" type="text/html">
             <div class="detail-header layout-style">
-                <h2 class="house-title">南山路/西湖零距离，舒适公寓</h2> 
-                <div class="landlord-pic"><img src="/static/images/landlord01.jpg"></div>
-                <h2 class="landlord-name">房东： <span>娟娟妹儿</span></h2>
+                <h2 class="house-title">{{house.title}}</h2> 
+                <div class="landlord-pic"><img src="{{house.user_avatar}}"></div>
+                <h2 class="landlord-name">房东： <span>{{house.user_name}}</span></h2>
             </div>
             <div class="house-info layout-style">
                <h3>房屋地址</h3>
                <ul class="house-info-list text-center">
-                    <li>昌平区</li>
-                    <li>昌平区西三旗建材城西路中腾建华商务大厦</li>
+                    <li>{{house.address}}</li>
                </ul>
             </div>
             <ul class="house-type layout-style">
                 <li>
                     <span class="icon-house"></span>
                     <div class="icon-text">
-                        <h3>出租3间</h3>
-                        <p>房屋面积:118平米</p> 
-                        <p>房屋户型:3室1厅2卫1厨1阳台</p>
+                        <h3>出租{{house.room_count}}间</h3>
+                        <p>房屋面积:{{house.acreage}}平米</p> 
+                        <p>房屋户型:{{house.unit}}</p>
                     </div>
                 </li>
                 <li>
                     <span class="icon-user"></span>
                     <div class="icon-text">
-                        <h3>宜住6人</h3>
+                        <h3>宜住{{house.capacity}}人</h3>
                     </div>
                 </li>
                 <li>
                     <span class="icon-bed"></span>
                     <div class="icon-text">
                         <h3>卧床配置</h3>
-                        <p>双人床:2x1.8x1张 1.5x2x2张</p>
+                        <p>{{house.beds}}</p>
                     </div>
                 </li>
             </ul> 
             <div class="house-info layout-style">
                 <h3>房间详情</h3>
                 <ul class="house-info-list">
-                    <li>收取押金<span>800</span></li>
-                    <li>最少入住天数<span>1</span></li>
-                    <li>最多入住天数<span>无限制</span></li>
+                    <li>收取押金<span>{{(house.deposit/100.0).toFixed(0)}}</span></li>
+                    <li>最少入住天数<span>{{house.min_days}}</span></li>
+                    <li>最多入住天数<span>{{if house.max_days==0}}无限制{{else}}{{house.max_days}}{{/if}}</span></li>
                 </ul>
             </div>
             <div class="house-facility layout-style">
                 <h3>配套设施</h3>
                 <ul class="house-facility-list clearfix">
-                    <li><span class="wirelessnetwork-ico"></span>无线网络</li>
-                    <li><span class="shower-ico"></span>热水淋浴</li>
-                    <li><span class="aircondition-ico"></span>空调</li>
-                    <li><span class="heater-ico"></span>暖气</li>
-                    <li><span class="smoke-ico"></span>允许吸烟</li>
-                    <li><span class="drinking-ico"></span>饮水设备</li>
-                    <li><span class="brush-ico"></span>牙具</li>
-                    <li><span class="soap-ico"></span>香皂</li>
-                    <li><span class="slippers-ico"></span>拖鞋</li>
-                    <li><span class="toiletpaper-ico"></span>手纸</li>
-                    <li><span class="towel-ico"></span>毛巾</li>
-                    <li><span class="toiletries-ico"></span>沐浴露、洗发露</li>
-                    <li><span class="icebox-ico"></span>冰箱</li>
-                    <li><span class="washer-ico"></span>洗衣机</li>
-                    <li><span class="elevator-ico"></span>电梯</li>
-                    <li><span class="iscook-ico"></span>允许做饭</li>
-                    <li><span class="pet-ico"></span>允许带宠物</li>
-                    <li><span class="meet-ico"></span>允许聚会</li>
-                    <li><span class="accesssys-ico"></span>门禁系统</li>
-                    <li><span class="parkingspace-ico"></span>停车位</li>
-                    <li><span class="jinzhi-ico"></span>有线网络</li>
-                    <li><span class="jinzhi-ico"></span>电视</li>
-                    <li><span class="jinzhi-ico"></span>浴缸</li>
+                    <li><span class="{{if 1 in house.facilities}}wirelessnetwork-ico{{else}}jinzhi-ico{{/if}}"></span>无线网络</li>
+                    <li><span class="{{if 2 in house.facilities}}shower-ico{{else}}jinzhi-ico{{/if}}"></span>热水淋浴</li>
+                    <li><span class="{{if 3 in house.facilities}}aircondition-ico{{else}}jinzhi-ico{{/if}}"></span>空调</li>
+                    <li><span class="{{if 4 in house.facilities}}heater-ico{{else}}jinzhi-ico{{/if}}"></span>暖气</li>
+                    <li><span class="{{if 5 in house.facilities}}smoke-ico{{else}}jinzhi-ico{{/if}}"></span>允许吸烟</li>
+                    <li><span class="{{if 6 in house.facilities}}drinking-ico{{else}}jinzhi-ico{{/if}}"></span>饮水设备</li>
+                    <li><span class="{{if 7 in house.facilities}}brush-ico{{else}}jinzhi-ico{{/if}}"></span>牙具</li>
+                    <li><span class="{{if 8 in house.facilities}}soap-ico{{else}}jinzhi-ico{{/if}}"></span>香皂</li>
+                    <li><span class="{{if 9 in house.facilities}}slippers-ico{{else}}jinzhi-ico{{/if}}"></span>拖鞋</li>
+                    <li><span class="{{if 10 in house.facilities}}toiletpaper-ico{{else}}jinzhi-ico{{/if}}"></span>手纸</li>
+                    <li><span class="{{if 11 in house.facilities}}towel-ico{{else}}jinzhi-ico{{/if}}"></span>毛巾</li>
+                    <li><span class="{{if 12 in house.facilities}}toiletries-ico{{else}}jinzhi-ico{{/if}}"></span>沐浴露、洗发露</li>
+                    <li><span class="{{if 13 in house.facilities}}icebox-ico{{else}}jinzhi-ico{{/if}}"></span>冰箱</li>
+                    <li><span class="{{if 14 in house.facilities}}washer-ico{{else}}jinzhi-ico{{/if}}"></span>洗衣机</li>
+                    <li><span class="{{if 15 in house.facilities}}elevator-ico{{else}}jinzhi-ico{{/if}}"></span>电梯</li>
+                    <li><span class="{{if 16 in house.facilities}}iscook-ico{{else}}jinzhi-ico{{/if}}"></span>允许做饭</li>
+                    <li><span class="{{if 17 in house.facilities}}pet-ico{{else}}jinzhi-ico{{/if}}"></span>允许带宠物</li>
+                    <li><span class="{{if 18 in house.facilities}}meet-ico{{else}}jinzhi-ico{{/if}}"></span>允许聚会</li>
+                    <li><span class="{{if 19 in house.facilities}}accesssys-ico{{else}}jinzhi-ico{{/if}}"></span>门禁系统</li>
+                    <li><span class="{{if 20 in house.facilities}}parkingspace-ico{{else}}jinzhi-ico{{/if}}"></span>停车位</li>
+                    <li><span class="{{if 21 in house.facilities}}wirednetwork-ico{{else}}jinzhi-ico{{/if}}"></span>有线网络</li>
+                    <li><span class="{{if 22 in house.facilities}}tv-ico{{else}}jinzhi-ico{{/if}}"></span>电视</li>
+                    <li><span class="{{if 23 in house.facilities}}hotbathtub-ico{{else}}jinzhi-ico{{/if}}"></span>浴缸</li>
                 </ul>
-            </div>
-        </div>
-        <a class="book-house" href="/booking.html?hid=">即刻预定</a>
+            </div> 
+        <a class="book-house" href="/booking.html?hid={{house.hid}}">即刻预定</a>
+        </script>
         <div class="footer">
             <p><span><i class="fa fa-copyright"></i></span>爱家租房&nbsp;&nbsp;享受家的温馨</p>
         </div>
@@ -114,15 +117,7 @@
     <script src="/static/plugins/swiper/js/swiper.jquery.min.js"></script>
     <script src="/static/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
     <script src="/static/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+    <script src="/static/js/template.js"></script>
     <script src="/static/js/ihome/detail.js"></script>
-    <script type="text/javascript">
-        var mySwiper = new Swiper ('.swiper-container', {
-            loop: true,
-            autoplay: 2000,
-            autoplayDisableOnInteraction: false,
-            pagination: '.swiper-pagination',
-            paginationType: 'fraction'
-        })         
-    </script>
 </body>
 </html>

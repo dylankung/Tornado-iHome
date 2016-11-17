@@ -24,7 +24,6 @@ class Application(tornado.web.Application):
             password = config.mysql_options['password'],
             database = config.mysql_options['database']
         )
-        # self.session_manager = session.SessionManager(config.session_secret, config.redis_options, config.session_timeout)
         super(Application, self).__init__(urls, **settings)
 
 
