@@ -105,8 +105,21 @@
                     <li><span class="{{if 23 in house.facilities}}hotbathtub-ico{{else}}jinzhi-ico{{/if}}"></span>浴缸</li>
                 </ul>
             </div> 
-        <a class="book-house" href="/booking.html?hid={{house.hid}}">即刻预定</a>
+            {{if house.comments }}
+            <div class="house-info layout-style">
+                <h3>评价信息</h3>
+                <ul class="house-comment-list">
+                    {{ each house.comments as comment}}
+                    <li>
+                        <p>{{comment.user_name}}<span class="fr">{{comment.ctime}}</span></p>
+                        <p>{{comment.comment}}</p>
+                    </li>
+                    {{/each}}
+                </ul>
+            </div>
+            {{/if}}
         </script>
+        <a class="book-house" href="">即刻预定</a>
         <div class="footer">
             <p><span><i class="fa fa-copyright"></i></span>爱家租房&nbsp;&nbsp;享受家的温馨</p>
         </div>

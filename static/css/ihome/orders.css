@@ -39,6 +39,7 @@ body {
 }
 .orders-list>li {
     font-size: 14px;
+    margin-bottom: 10px;
 }
 .order-title {
     background-color: #fff;
@@ -47,6 +48,16 @@ body {
     border-bottom: 1px solid #eee;
     padding: 10px;
     color: #666;
+}
+.order-title>a {
+    color: #4f4f4f;
+    text-decoration: none;
+}
+.order-title>a :hover {
+    text-decoration: none;
+}
+.order-title>h3 {
+    display: inline;
 }
 .order-content {
     background-color: #fff; 
@@ -74,4 +85,10 @@ body {
     height: 25px;
     line-height: 25px;
     color: #666;
+}
+.order-operate{
+    margin-top: -7px;
+}
+.order-reject {
+    margin-left: 10px;
 }

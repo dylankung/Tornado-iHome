@@ -19,7 +19,7 @@ class HouseAreaHandler(BaseHandler):
             logging.error(e)
             ret = None
         if ret:
-            return self.write(ret)
+            return self.write('{"errno":0, "errmsg":"OK", "data":%s}' % ret)
         try:
             ret = self.db.query("select ai_area_id,ai_name from ih_area_info;")
         except Exception as e:
@@ -28,9 +28,10 @@ class HouseAreaHandler(BaseHandler):
         area_data = []
         for area in ret:
             area_data.append(dict(area_id=area["ai_area_id"], name=area["ai_name"]))
-        resp = {"errno":0, "errmsg":"OK", "data":area_data}
+        json_area_data = json.dumps(area_data)
+        resp = '{"errno":0, "errmsg":"OK", "data":%s}' % json_area_data
         try:
-            self.redis.setex("area_info", constants.AREA_INFO_REDIS_EXPIRE_SECOND, json.dumps(resp))
+            self.redis.setex("area_info", constants.AREA_INFO_REDIS_EXPIRE_SECOND, json_area_data)
         except Exception as e:
             logging.error(e)
         self.write(resp)
@@ -40,6 +41,8 @@ class HouseInfoHandler(BaseHandler):
     """单一房屋"""
     def get(self):
         house_id = self.get_argument("id")
+        self.get_current_user()
+        user_id = self.session.data.get("user_id", "")
         try:
             ret = self.redis.get("hd_%s" % house_id)
         except Exception as e:
@@ -47,9 +50,9 @@ class HouseInfoHandler(BaseHandler):
             ret = None
         if ret:
             logging.info("hit redis")
-            return self.write(ret)
+            return self.write('{"errno":0, "errmsg":"OK","user_id":%s, "house":%s}' % (user_id, ret))
         try:
-            ret = self.db.get("select hi_title,hi_price,hi_address,hi_room_count,hi_acreage,hi_house_unit,hi_capacity,hi_beds,hi_deposit,hi_min_days,hi_max_days,up_name,up_avatar from ih_house_info inner join ih_user_profile on hi_user_id=up_user_id where hi_house_id=%s", house_id)
+            ret = self.db.get("select hi_title,hi_price,hi_address,hi_room_count,hi_acreage,hi_house_unit,hi_capacity,hi_beds,hi_deposit,hi_min_days,hi_max_days,up_name,up_avatar,hi_user_id from ih_house_info inner join ih_user_profile on hi_user_id=up_user_id where hi_house_id=%s", house_id)
         except Exception as e:
             logging.error(e)
             return self.write({"errno":1, "errmsg":"get data error"})
@@ -57,6 +60,7 @@ class HouseInfoHandler(BaseHandler):
             self.write({"errno":2, "errmsg":"no data"})
         house = {
             "hid":house_id,
+            "user_id":ret["hi_user_id"],
             "title":ret["hi_title"],
             "price":ret["hi_price"],
             "address":ret["hi_address"],
@@ -89,9 +93,24 @@ class HouseInfoHandler(BaseHandler):
         if ret:
             for l in ret:
                 house["facilities"].append(l["hf_facility_id"])
-        resp = {"errno":0, "errmsg":"OK", "house":house}
         try:
-            self.redis.setex("hd_%s" % house_id, constants.HOUSE_DETAIL_REDIS_EXPIRE_SECOND, json.dumps(resp))
+            ret = self.db.query("select oi_comment,up_name,up_mobile,oi_ctime from ih_order_info inner join ih_user_profile on oi_user_id=up_user_id where oi_house_id=%(house_id)s and oi_comment is not null order by oi_ctime desc limit %(limit)s", house_id=house_id, limit=constants.HOUSE_DETAIL_COMMENT_DISPLAY_COUNTS)
+        except Exception as e:
+            logging.error(e)
+            ret = None
+        house["comments"] = []
+        if ret:
+            for l in ret:
+                comment = {
+                    "comment":l["oi_comment"],
+                    "user_name":l["up_name"] if l["up_name"] != l["up_mobile"] else "匿名用户",
+                    "ctime":l["oi_ctime"].strftime("%Y-%m-%d %H:%M:%S")
+                }
+                house["comments"].append(comment)
+        json_house = json.dumps(house)
+        resp = '{"errno":0, "errmsg":"OK","user_id":%s, "house":%s}' % (user_id,json_house)
+        try:
+            self.redis.setex("hd_%s" % house_id, constants.HOUSE_DETAIL_REDIS_EXPIRE_SECOND, json_house)
         except Exception as e:
             logging.error(e)
         self.write(resp)
@@ -194,38 +213,53 @@ class IndexHandler(BaseHandler):
             logging.error(e)
             ret = None
         if ret:
-            return self.write(ret)
+            json_houses = ret
+        else:
+            try:
+                house_ret = self.db.query("select distinct a.hi_house_id,a.hi_title,a.hi_order_count,a.hi_index_image_url from ih_house_info a inner join ih_house_image b on a.hi_house_id=b.hi_house_id order by a.hi_order_count desc limit %s;" % constants.HOME_PAGE_MAX_HOUSES)
+            except Exception as e:
+                logging.error(e)
+                return self.write({"errno":1, "errmsg":"get data error"})
+            if not house_ret:
+                return self.write({"errno":2, "errmsg":"no data"})
+            houses = []
+            for l in house_ret:
+                if not l["hi_index_image_url"]:
+                    continue
+                house = {
+                    "house_id":l["hi_house_id"],
+                    "title":l["hi_title"],
+                    "img_url": image_url_prefix + l["hi_index_image_url"]
+                }
+                houses.append(house)
+            json_houses = json.dumps(houses)
+            try:
+                self.redis.setex("home_page_data", constants.HOME_PAGE_DATA_REDIS_EXPIRE_SECOND, json_houses)
+            except Exception as e:
+                logging.error(e)
         try:
-            house_ret = self.db.query("select distinct a.hi_house_id,a.hi_title,a.hi_order_count,a.hi_index_image_url from ih_house_info a inner join ih_house_image b on a.hi_house_id=b.hi_house_id order by a.hi_order_count desc limit %s;" % constants.HOME_PAGE_MAX_HOUSES)
+            ret = self.redis.get("area_info")
         except Exception as e:
             logging.error(e)
-            return self.write({"errno":1, "errmsg":"get data error"})
-        if not house_ret:
-            return self.write({"errno":2, "errmsg":"no data"})
-        houses = []
-        for l in house_ret:
-            if not l["hi_index_image_url"]:
-                continue
-            house = {
-                "house_id":l["hi_house_id"],
-                "title":l["hi_title"],
-                "img_url": image_url_prefix + l["hi_index_image_url"]
-            }
-            houses.append(house)
-        try:
-            area_ret = self.db.query("select ai_area_id,ai_name from ih_area_info")
-        except Exception as e:
-            logging.error(e)
-            area_ret = None
-        areas = []
-        if area_ret:
-            for area in area_ret:
-                areas.append(dict(area_id=area["ai_area_id"], name=area["ai_name"]))
-        resp = dict(errno=0, errmsg="OK", houses=houses, areas=areas)
-        try:
-            self.redis.setex("home_page_data", constants.HOME_PAGE_DATA_REDIS_EXPIRE_SECOND, json.dumps(resp))
-        except Exception as e:
-            logging.error(e)
+            ret = None
+        if ret:
+            json_areas = ret
+        else:
+            try:
+                area_ret = self.db.query("select ai_area_id,ai_name from ih_area_info")
+            except Exception as e:
+                logging.error(e)
+                area_ret = None
+            areas = []
+            if area_ret:
+                for area in area_ret:
+                    areas.append(dict(area_id=area["ai_area_id"], name=area["ai_name"]))
+            json_areas = json.dumps(areas)
+            try:
+                self.redis.setex("area_info", constants.AREA_INFO_REDIS_EXPIRE_SECOND, json_areas)
+            except Exception as e:
+                logging.error(e)
+        resp = '{"errno":0, "errmsg":"OK", "houses":%s, "areas":%s}' % (json_houses, json_areas)
         self.write(resp)
 
 

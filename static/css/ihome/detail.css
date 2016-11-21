@@ -163,6 +163,9 @@ body {
     float: right;
     color: #333;
 }
+.house-comment-list {
+   border-bottom: 1px solid #eee; 
+}
 .house-facility-list>li {
     float: left;
     width: 50%;
@@ -174,6 +177,7 @@ body {
     color: #666;
 }
 .book-house {
+    display: none;
     position: fixed;
     bottom: 0px;
     width: 100%;

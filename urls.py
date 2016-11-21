@@ -26,6 +26,9 @@ ihome_api_urls = [
     (r'^/api/house/list$', House.HouseListHandler),
     (r'^/api/order$', Orders.OrderHandler),
     (r'^/api/order/my$', Orders.MyOrdersHandler),
+    (r'^/api/order/accept$', Orders.AcceptOrderHandler),
+    (r'^/api/order/reject$', Orders.RejectOrderHandler),
+    (r'^/api/order/comment$', Orders.OrderCommentHandler),
 ]
 
 mis_api_urls = [
