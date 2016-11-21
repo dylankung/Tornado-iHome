@@ -18,8 +18,9 @@ $(document).ready(function(){
         if (0 == data.errno) {
             $(".swiper-container").html(template("house-image-tmpl", {img_urls:data.house.img_urls, price:data.house.price}));
             $(".detail-con").html(template("house-detail-tmpl", {house:data.house}));
-            if ("f" in queryData) {
-                $(".book-house").hide();
+            if (!(data.user_id == data.house.user_id || "f" in queryData)) {
+                $(".book-house").attr("href", "/booking.html?hid="+data.house.hid);
+                $(".book-house").show();
             }
             var mySwiper = new Swiper ('.swiper-container', {
                 loop: true,
