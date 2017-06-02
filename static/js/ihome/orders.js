@@ -9,11 +9,16 @@ function centerModals(){
     });
 }
 
+function getCookie(name) {
+    var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+    return r ? r[1] : undefined;
+}
+
 $(document).ready(function(){
     $('.modal').on('show.bs.modal', centerModals);      //当模态框出现的时候
     $(window).on('resize', centerModals);
     $.get("/api/order/my?role=custom", function(data){
-        if (0 == data.errno) {
+        if ("0" == data.errno) {
             $(".orders-list").html(template("orders-list-tmpl", {orders:data.orders}));
             $(".order-comment").on("click", function(){
                 var orderId = $(this).parents("li").attr("order-id");
@@ -33,12 +38,15 @@ $(document).ready(function(){
                     data:JSON.stringify(data),
                     contentType:"application/json",
                     dataType:"json",
+                    headers:{
+                        "X-XSRFTOKEN":getCookie("_xsrf"),
+                    },
                     success:function (data) {
-                        if (-1 == data.errno) {
+                        if ("4101" == data.errno) {
                             location.href = "/login.html";
-                        } else if (0 == data.errno) {
+                        } else if ("0" == data.errno) {
                             $(".orders-list>li[order-id="+ orderId +"]>div.order-content>div.order-text>ul li:eq(4)>span").html("已完成");
-                            $(".order-operate").hide();
+                            $("ul.orders-list>li[order-id="+ orderId +"]>div.order-title>div.order-operate").hide();
                             $("#comment-modal").modal("hide");
                         }
                     }

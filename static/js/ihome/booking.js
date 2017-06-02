@@ -2,6 +2,11 @@ function hrefBack() {
     history.go(-1);
 }
 
+function getCookie(name) {
+    var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+    return r ? r[1] : undefined;
+}
+
 function decodeQuery(){
     var search = decodeURI(document.location.search);
     return search.replace(/(^\?)/, '').split('&').reduce(function(result, item){
@@ -20,8 +25,9 @@ function showErrorMsg() {
 }
 
 $(document).ready(function(){
+    // 判断用户是否登录
     $.get("/api/check_login", function(data) {
-        if (0 != data.errno) {
+        if ("0" != data.errno) {
             location.href = "/login.html";
         }
     }, "json");
@@ -36,7 +42,7 @@ $(document).ready(function(){
         var endDate = $("#end-date").val();
 
         if (startDate && endDate && startDate > endDate) {
-            showErrorMsg();
+            showErrorMsg("日期有误，请重新选择!");
         } else {
             var sd = new Date(startDate);
             var ed = new Date(endDate);
@@ -48,6 +54,8 @@ $(document).ready(function(){
     });
     var queryData = decodeQuery();
     var houseId = queryData["hid"];
+
+    // 获取房屋的基本信息
     $.get("/api/house/info?id=" + houseId, function(data){
         if (0 == data.errno) {
             $(".house-info>img").attr("src", data.house.img_urls[0]);
@@ -71,14 +79,19 @@ $(document).ready(function(){
                 data: JSON.stringify(data), 
                 contentType: "application/json",
                 dataType: "json",
+                headers:{
+                    "X-XSRFTOKEN":getCookie("_xsrf"),
+                },
                 success: function (data) {
-                    if (-1 == data.errno) {
+                    if ("4101" == data.errno) {
                         location.href = "/login.html";
-                    } else if (0 == data.errno) {
+                    } else if ("4004" == data.errno) {
+                        showErrorMsg("房间已被抢定，请重新选择日期！");
+                    } else if ("0" == data.errno) {
                         location.href = "/orders.html";
                     }
                 }
             });
         }
     });
-})
+});
