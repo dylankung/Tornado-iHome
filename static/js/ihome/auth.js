@@ -6,17 +6,25 @@ function showSuccessMsg() {
     });
 }
 
+function getCookie(name) {
+    var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+    return r ? r[1] : undefined;
+}
+
 $(document).ready(function(){
     $.get("/api/profile/auth", function(data){
-        if (-1 == data.errno) {
+        // 4101代表用户未登录
+        if ("4101" == data.errno) {
             location.href = "/login.html";
         }
-        else if (0 == data.errno) {
+        else if ("0" == data.errno) {
             if (data.data.real_name && data.data.id_card) {
                 $("#real-name").val(data.data.real_name);
                 $("#id-card").val(data.data.id_card);
+                // 给input添加disabled属性，禁止用户修改
                 $("#real-name").prop("disabled", true);
                 $("#id-card").prop("disabled", true);
+                // 隐藏提交保存按钮
                 $("#form-auth>input[type=submit]").hide();
             } 
         }
@@ -35,6 +43,9 @@ $(document).ready(function(){
             data: jsonData, 
             contentType: "application/json",
             dataType: "json",
+            headers: {
+                "X-XSRFTOKEN": getCookie("_xsrf")
+            },
             success: function (data) {
                 if (0 == data.errno) {
                     $(".error-msg").hide();

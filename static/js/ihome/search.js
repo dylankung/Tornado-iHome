@@ -1,8 +1,9 @@
-var cur_page = 1;
-var next_page = 1;
-var total_page = 1;
-var house_data_querying = true;
+var cur_page = 1; // 当前页
+var next_page = 1; // 下一页
+var total_page = 1;  // 总页数
+var house_data_querying = true;   // 是否正在向后台获取数据
 
+// 解析url中的查询字符串
 function decodeQuery(){
     var search = decodeURI(document.location.search);
     return search.replace(/(^\?)/, '').split('&').reduce(function(result, item){
@@ -12,6 +13,7 @@ function decodeQuery(){
     }, {});
 }
 
+// 更新用户点选的筛选条件
 function updateFilterDateDisplay() {
     var startDate = $("#start-date").val();
     var endDate = $("#end-date").val();
@@ -24,7 +26,11 @@ function updateFilterDateDisplay() {
     }
 }
 
-function updateHouseData(action="append") {
+// 更新房源列表信息
+// action表示从后端请求的数据在前端的展示方式
+// 默认采用追加方式
+// action=renew 代表页面数据清空从新展示
+function updateHouseData(action) {
     var areaId = $(".filter-area>li.active").attr("area-id");
     if (undefined == areaId) areaId = "";
     var startDate = $("#start-date").val();
@@ -39,17 +45,17 @@ function updateHouseData(action="append") {
     };
     $.get("/api/house/list", params, function(data){
         house_data_querying = false;
-        if (0 == data.errno) {
-            if (0 == data.total_page) {
+        if ("0" == data.errno) {
+            if ("0" == data.total_page) {
                 $(".house-list").html("暂时没有符合您查询的房屋信息。");
             } else {
                 total_page = data.total_page;
-                if ("append" == action) {
-                    cur_page = next_page;
-                    $(".house-list").append(template("house-list-tmpl", {houses:data.data}));
-                } else if ("renew" == action) {
+                if ("renew" == action) {
                     cur_page = 1;
                     $(".house-list").html(template("house-list-tmpl", {houses:data.data}));
+                } else {
+                    cur_page = next_page;
+                    $(".house-list").append(template("house-list-tmpl", {houses: data.data}));
                 }
             }
         }
@@ -67,8 +73,9 @@ $(document).ready(function(){
     if (!areaName) areaName = "位置区域";
     $(".filter-title-bar>.filter-title").eq(1).children("span").eq(0).html(areaName);
 
+    // 获取筛选条件中的城市区域信息
     $.get("/api/house/area", function(data){
-        if (0 == data.errno) {
+        if ("0" == data.errno) {
             var areaId = queryData["aid"];
             if (areaId) {
                 for (var i=0; i<data.data.length; i++) {

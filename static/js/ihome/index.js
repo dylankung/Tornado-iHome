@@ -58,18 +58,23 @@ function goToSearchPage(th) {
 }
 
 $(document).ready(function(){
+    // 检查用户的登录状态
     $.get("/api/check_login", function(data) {
-        if (0 == data.errno) {
+        if ("0" == data.errno) {
             $(".top-bar>.user-info>.user-name").html(data.data.name);    
             $(".top-bar>.user-info").show();
         } else {
             $(".top-bar>.register-login").show();
         }
     }, "json");
+
+    // 获取幻灯片要展示的房屋基本信息
     $.get("/api/house/index", function(data){
-        if (0 == data.errno) {
+        if ("0" == data.errno) {
             $(".swiper-wrapper").html(template("swiper-houses-tmpl", {houses:data.houses}));
             $(".area-list").html(template("area-list-tmpl", {areas:data.areas}));
+
+            // 设置幻灯片对象，开启幻灯片滚动
             var mySwiper = new Swiper ('.swiper-container', {
                 loop: true,
                 autoplay: 2000,

@@ -1,0 +1,40 @@
+1. 短信验证码接口
+
+url： /api/smscode
+
+请求方式:  post
+
+传入参数： json格式
+
+参数名         类型      是否必须    说明
+mobile        str       是       手机号
+piccode_id    str       是       图片验证码编号
+piccode_text  str       是       用户输入的图片验证码
+
+
+返回值： json格式
+
+参数名         类型      是否必须    说明
+errcode       str       是        结果代码
+errmsg        str       是        结果信息
+
+2. 注册
+
+url： /api/register
+
+请求方式:  post
+
+传入参数： json格式
+
+参数名         类型      是否必须    说明
+mobile        str       是       手机号
+phonecode       str       是       短信验证码
+password      str       是       密码
+
+
+返回值： json格式
+
+参数名         类型      是否必须    说明
+errcode       str       是        结果代码
+errmsg        str       是        结果信息
+user_id       int       否        附加的信息，新用户的编号
